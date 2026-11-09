@@ -1,0 +1,36 @@
+{
+  "name": "solidbooks-showcase",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Engineering showcase for SolidBooks, a custom financial management and business automation platform built by Solid Code Solutions LLC.",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "author": "Solid Code Solutions LLC (https://solidcodesolutionsllc.com)",
+  "homepage": "https://solidcodesolutionsllc.com",
+  "type": "module",
+  "packageManager": "pnpm@10.19.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.19.2",
+    "eslint": "^10.13.0",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.10",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.0",
+    "vitest": "^5.0.5"
+  }
+}

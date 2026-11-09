@@ -1,0 +1,32 @@
+%% SolidBooks system architecture (high level; no infrastructure identifiers).
+flowchart LR
+  owner(["Business owner<br/>(browser, phone)"])
+  customer(["Customers"])
+
+  subgraph cloud["Google Cloud · containerized service"]
+    direction TB
+    web["React web app<br/>TypeScript · Vite · TanStack"]
+    portal["Customer pages<br/>invoice and payment page<br/>card authorization"]
+    api["Fastify API<br/>TypeScript · Zod contracts<br/>session + TOTP sign-in"]
+    jobs["Scheduled jobs<br/>bank sync · recurring billing<br/>payment sweep · backups"]
+  end
+
+  db[("PostgreSQL<br/>Drizzle ORM<br/>ledger invariants in the database")]
+  docs[("Object storage<br/>issued PDFs, replicated")]
+  backup[("Encrypted database backups")]
+
+  stripe["Stripe<br/>cards · saved cards · payouts"]
+  plaid["Plaid<br/>bank feeds"]
+  mail["Email (SMTP)<br/>invoices · receipts · reminders"]
+
+  owner --> web --> api
+  customer --> portal --> api
+  jobs -- "signed scheduler identity" --> api
+  api --> db
+  api --> docs
+  db -. nightly .-> backup
+  api <--> stripe
+  stripe -- "signed webhooks" --> api
+  api <--> plaid
+  plaid -- "signed webhooks" --> api
+  api --> mail

@@ -1,0 +1,27 @@
+%% From invoice to reconciled bank deposit (card payments; bank transfers follow the
+%% same recording and reconciliation path without the processor).
+sequenceDiagram
+  autonumber
+  participant SB as SolidBooks
+  participant C as Customer
+  participant P as Payment processor
+  participant B as Bank feed
+
+  opt Recurring billing with automatic payment
+    SB->>C: Billing link with the authorization terms
+    C->>P: Saves a card (authorization recorded)
+  end
+  SB->>C: Invoice email with a private View & Pay link
+  C->>SB: Opens the invoice and payment page
+  alt Customer pays by card
+    C->>P: Pays on the processor's secure form
+  else Automatic payment is authorized
+    SB->>P: Charges the saved card for this invoice only
+  end
+  P-->>SB: Signed webhook
+  Note over SB: Verify signature · store event once by id ·<br/>re-fetch amounts from the processor
+  SB->>SB: Post payment and processing fee (balanced entry)
+  SB->>C: Receipt
+  P-->>B: Payout to the business bank account
+  B-->>SB: Bank transaction (daily sync)
+  SB->>SB: Match payout to the recorded payments (reconciled)

@@ -1,0 +1,15 @@
+%% Continuous integration and the controlled production release.
+flowchart TB
+  ci["Continuous integration · every push<br/>secret scans of tracked files and full history<br/>lint · typecheck · migrations match the schema<br/>unit and database tests on in-memory PostgreSQL<br/>browser end-to-end scenarios<br/>container build · boot as least-privileged role<br/>backup and restore rehearsal"]
+
+  build["Build from a clean checkout of the commit"]
+  before["Financial fingerprint (read-only)"]
+  migrate["If the schema changes: recovery point,<br/>encrypted backup, additive migration"]
+  deploy["Deploy the new revision at 0% traffic"]
+  smoke["Configuration diff and smoke tests<br/>on the new revision"]
+  promote["Promote to 100% of traffic"]
+  after["Fingerprint again: books unchanged"]
+  rollback(["Previous revision kept ready:<br/>one-command rollback"])
+
+  ci --> build --> before --> migrate --> deploy --> smoke --> promote --> after
+  promote -. "if anything looks wrong" .-> rollback

@@ -1,0 +1,17 @@
+%% How a business event becomes reportable, immutable accounting data.
+flowchart LR
+  event["Business event<br/>invoice approved · payment recorded<br/>card fee · transfer · confirmed bank row"]
+  posting["Posting<br/>business rules map the event<br/>to debits and credits"]
+  validate["Validation<br/>balanced · integer cents<br/>one side per line · valid date"]
+  tx["One database transaction<br/>journal entry + lines<br/>+ audit event"]
+  invariants{{"PostgreSQL invariants at COMMIT<br/>balanced · sealed · immutable<br/>closed periods locked"}}
+  ledger[("Immutable ledger")]
+  reports["Financial reports<br/>Profit and Loss (cash / accrual)<br/>Balance Sheet · Trial Balance<br/>General Ledger · A/R aging"]
+  reversal["Correction<br/>reversing entry<br/>(+ corrected entry)"]
+  rejected(["Rejected:<br/>nothing is written"])
+
+  event --> posting --> validate --> tx --> invariants
+  invariants -- pass --> ledger --> reports
+  invariants -- fail --> rejected
+  validate -- fail --> rejected
+  ledger -. "a mistake is found" .-> reversal --> validate
