@@ -1,6 +1,6 @@
 <div align="center">
 
-# SolidBooks
+<h1><img src="docs/images/solidbooks-logo.svg" alt="SolidBooks logo" height="56" align="middle" /> SolidBooks</h1>
 
 **Custom financial management and business automation, built for a real business.**
 
